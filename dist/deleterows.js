@@ -17,7 +17,7 @@ const db = new sqlite3_1.default.Database(dbPath, (err) => {
     }
 });
 // Correct DELETE statement
-db.run("DELETE FROM osu_players WHERE rank = 0", function (err) {
+db.run("DELETE FROM osu_players", function (err) {
     if (err) {
         console.error("Error deleting from the database:", err);
     }

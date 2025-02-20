@@ -6,11 +6,11 @@ import { apiCall, player_list } from "./osuapi"; // Import apiCall from osuapi.t
 
 // Define the structure of a row in the osu_players table
 interface OsuPlayer {
-    osu_id: number;
+    user_id: string;
     username: string;
-    rank: number;
-    pp: number;
-    accuracy: number;
+    rank: string;
+    pp: string;
+    accuracy: string;
     country: string;
 }
 
@@ -31,11 +31,11 @@ db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS osu_players (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            osu_id INTEGER NOT NULL UNIQUE,
+            user_id TEXT NOT NULL UNIQUE,
             username TEXT NOT NULL,
-            rank INTEGER,
-            pp REAL,
-            accuracy REAL,
+            rank TEXT,
+            pp TEXT,
+            accuracy TEXT,
             country TEXT
         )
     `);
@@ -45,8 +45,8 @@ db.serialize(() => {
 const insertPlayerIfNotExists = (player: OsuPlayer): Promise<void> => {
     return new Promise((resolve) => {
         db.get(
-            "SELECT osu_id FROM osu_players WHERE osu_id = ?",
-            [player.osu_id],
+            "SELECT user_id FROM osu_players WHERE user_id = ?",
+            [player.user_id],
             (err, row) => {
                 if (err) {
                     console.error("Error checking existing player:", err);
@@ -56,14 +56,14 @@ const insertPlayerIfNotExists = (player: OsuPlayer): Promise<void> => {
 
                 if (row) {
                     console.log(
-                        `Player with osu_id ${player.osu_id} already exists. Skipping insertion.`
+                        `Player with user_id ${player.user_id} already exists. Skipping insertion.`
                     );
                     resolve();
                 } else {
                     db.run(
-                        "INSERT INTO osu_players (osu_id, username, rank, pp, accuracy, country) VALUES (?, ?, ?, ?, ?, ?)",
+                        "INSERT INTO osu_players (user_id, username, rank, pp, accuracy, country) VALUES (?, ?, ?, ?, ?, ?)",
                         [
-                            player.osu_id,
+                            player.user_id,
                             player.username,
                             player.rank,
                             player.pp,
@@ -78,7 +78,7 @@ const insertPlayerIfNotExists = (player: OsuPlayer): Promise<void> => {
                                 );
                             } else {
                                 console.log(
-                                    `Inserted player ${player.username} (osu_id: ${player.osu_id})`
+                                    `Inserted player ${player.username} (user_id: ${player.user_id})`
                                 );
                             }
                             resolve();
@@ -100,26 +100,26 @@ const fetchAndInsertPlayers = async () => {
 
     for (const player of players) {
         const osuPlayer = {
-            osu_id: player.pp_rank, // Assuming pp_rank is equivalent to osu_id, replace if needed
+            user_id: player.user_id,
             username: player.username,
-            rank: player.pp_rank, // You can modify this logic depending on the data available
-            pp: player.pp_rank, // Replace with actual PP if available
-            accuracy: 0, // You might need to include accuracy if available
-            country: "Unknown", // You can modify this depending on the data structure
+            rank: player.pp_rank,
+            pp: player.pp_raw,
+            accuracy: player.accuracy,
+            country: player.country,
         };
         await insertPlayerIfNotExists(osuPlayer);
     }
 
     // Print all players after inserting
     db.all(
-        "SELECT ID, osu_id, username, rank, pp, accuracy, country FROM osu_players",
+        "SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players",
         (err, rows: OsuPlayer[]) => {
             if (err) {
                 console.error("Error querying the database:", err);
             } else {
                 rows.forEach((row) => {
                     console.log(
-                        `${row.username} (osu! ID: ${row.osu_id}, Rank: ${row.rank}, PP: ${row.pp}, Accuracy: ${row.accuracy}%, Country: ${row.country})`
+                        `${row.username} (osu! ID: ${row.user_id}, Rank: ${row.rank}, PP: ${row.pp}, Accuracy: ${row.accuracy}%, Country: ${row.country})`
                     );
                 });
             }

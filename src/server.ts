@@ -1,22 +1,22 @@
 require("dotenv").config();
 
 import sqlite3 from "sqlite3";
-import path from "path"; // To handle file paths
+import path from "path";
 
 // Define the structure of a row in the osu_players table
 interface OsuPlayer {
-    osu_id: number; // osu! player ID
-    username: string; // Player's username
-    rank: number; // Player's rank
-    pp: number; // Player's "pp" (performance points)
-    accuracy: number; // Player's accuracy
-    country: string; // Player's country
+    osu_id: number;
+    username: string;
+    rank: number;
+    pp: number;
+    accuracy: number;
+    country: string;
 }
 
-// Construct the path to the database inside the 'db' folder
+// Database path
 const dbPath = path.resolve(__dirname, "../db", "player_database.db");
 
-// Create or open a SQLite database file (this will persist after program ends)
+// Create or open the database
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error("Failed to connect to the database:", err.message);
@@ -25,12 +25,12 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create the osu_players table with osu_id as a new column
+// Ensure the table exists
 db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS osu_players (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            osu_id INTEGER NOT NULL UNIQUE, -- The actual osu! player ID
+            osu_id INTEGER NOT NULL UNIQUE,
             username TEXT NOT NULL,
             rank INTEGER,
             pp REAL,
@@ -68,72 +68,89 @@ const players: OsuPlayer[] = [
     },
 ];
 
-// Function to insert a player after checking if they already exist
-const insertPlayerIfNotExists = (player: OsuPlayer) => {
-    db.get(
-        "SELECT osu_id FROM osu_players WHERE osu_id = ?",
-        [player.osu_id],
-        (err, row) => {
+// Function to insert a player only if they don't exist
+const insertPlayerIfNotExists = (player: OsuPlayer): Promise<void> => {
+    return new Promise((resolve) => {
+        db.get(
+            "SELECT osu_id FROM osu_players WHERE osu_id = ?",
+            [player.osu_id],
+            (err, row) => {
+                if (err) {
+                    console.error("Error checking existing player:", err);
+                    resolve();
+                    return;
+                }
+
+                if (row) {
+                    console.log(
+                        `Player with osu_id ${player.osu_id} already exists. Skipping insertion.`
+                    );
+                    resolve();
+                } else {
+                    db.run(
+                        "INSERT INTO osu_players (osu_id, username, rank, pp, accuracy, country) VALUES (?, ?, ?, ?, ?, ?)",
+                        [
+                            player.osu_id,
+                            player.username,
+                            player.rank,
+                            player.pp,
+                            player.accuracy,
+                            player.country,
+                        ],
+                        (insertErr) => {
+                            if (insertErr) {
+                                console.error(
+                                    "Error inserting player:",
+                                    insertErr
+                                );
+                            } else {
+                                console.log(
+                                    `Inserted player ${player.username} (osu_id: ${player.osu_id})`
+                                );
+                            }
+                            resolve();
+                        }
+                    );
+                }
+            }
+        );
+    });
+};
+
+// Insert all players sequentially, then fetch and print them
+const insertPlayersAndPrint = async () => {
+    for (const player of players) {
+        await insertPlayerIfNotExists(player);
+    }
+
+    // Now print the players after all inserts are complete
+    db.all(
+        "SELECT ID, osu_id, username, rank, pp, accuracy, country FROM osu_players",
+        (err, rows: OsuPlayer[]) => {
             if (err) {
-                console.error("Error checking existing player:", err);
-                return;
+                console.error("Error querying the database:", err);
+            } else {
+                rows.forEach((row) => {
+                    console.log(
+                        `${row.username} (osu! ID: ${row.osu_id}, Rank: ${row.rank}, PP: ${row.pp}, Accuracy: ${row.accuracy}%, Country: ${row.country})`
+                    );
+                });
             }
 
-            if (row) {
-                console.log(
-                    `Player with osu_id ${player.osu_id} already exists. Skipping insertion.`
-                );
-            } else {
-                // Player does not exist, insert into the database
-                db.run(
-                    "INSERT INTO osu_players (osu_id, username, rank, pp, accuracy, country) VALUES (?, ?, ?, ?, ?, ?)",
-                    [
-                        player.osu_id,
-                        player.username,
-                        player.rank,
-                        player.pp,
-                        player.accuracy,
-                        player.country,
-                    ],
-                    (insertErr) => {
-                        if (insertErr) {
-                            console.error("Error inserting player:", insertErr);
-                        } else {
-                            console.log(
-                                `Inserted player ${player.username} (osu_id: ${player.osu_id})`
-                            );
-                        }
-                    }
-                );
-            }
+            // Close the database after everything is done
+            db.close((closeErr) => {
+                if (closeErr) {
+                    console.error(
+                        "Error closing the database:",
+                        closeErr.message
+                    );
+                } else {
+                    console.log("Database connection closed.");
+                }
+            });
         }
     );
 };
 
-// Insert all players while ensuring no duplicates
-players.forEach(insertPlayerIfNotExists);
-
-// Query the players and log the results
-db.all(
-    "SELECT ID, osu_id, username, rank, pp, accuracy, country FROM osu_players",
-    (err, rows: OsuPlayer[]) => {
-        if (err) {
-            console.error("Error querying the database:", err);
-        } else {
-            rows.forEach((row) => {
-                console.log(
-                    `${row.username} (osu! ID: ${row.osu_id}, Rank: ${row.rank}, PP: ${row.pp}, Accuracy: ${row.accuracy}%, Country: ${row.country})`
-                );
-            });
-        }
-    }
-);
-
-// Close the database connection when done
-db.close((err) => {
-    if (err) {
-        console.error("Error closing the database:", err.message);
-    } else {
-        console.log("Database connection closed.");
-    }
-});
+// Run the function to insert players and print them
+insertPlayersAndPrint();

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
 const sqlite3_1 = __importDefault(require("sqlite3"));
 const path_1 = __importDefault(require("path"));
+const osuapi_1 = require("./osuapi"); // Import apiCall from osuapi.ts
 // Database path
 const dbPath = path_1.default.resolve(__dirname, "../db", "player_database.db");
 // Create or open the database
@@ -40,33 +41,6 @@ db.serialize(() => {
         )
     `);
 });
-// List of players to insert
-const players = [
-    {
-        osu_id: 123456,
-        username: "player1",
-        rank: 1,
-        pp: 10000,
-        accuracy: 98.52,
-        country: "USA",
-    },
-    {
-        osu_id: 654321,
-        username: "player2",
-        rank: 50,
-        pp: 12900,
-        accuracy: 97.46,
-        country: "Canada",
-    },
-    {
-        osu_id: 789012,
-        username: "player3",
-        rank: 100,
-        pp: 18500,
-        accuracy: 96.81,
-        country: "UK",
-    },
-];
 // Function to insert a player only if they don't exist
 const insertPlayerIfNotExists = (player) => {
     return new Promise((resolve) => {
@@ -101,12 +75,23 @@ const insertPlayerIfNotExists = (player) => {
         });
     });
 };
-// Insert all players sequentially, then fetch and print them
-const insertPlayersAndPrint = () => __awaiter(void 0, void 0, void 0, function* () {
+// Fetch player data from the API and insert into the database
+const fetchAndInsertPlayers = () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Fetching player data from osu! API...");
+    const players = yield (0, osuapi_1.apiCall)(osuapi_1.player_list); // Fetch players from API
+    console.log("Fetched data:", players);
     for (const player of players) {
-        yield insertPlayerIfNotExists(player);
+        const osuPlayer = {
+            osu_id: player.pp_rank, // Assuming pp_rank is equivalent to osu_id, replace if needed
+            username: player.username,
+            rank: player.pp_rank, // You can modify this logic depending on the data available
+            pp: player.pp_rank, // Replace with actual PP if available
+            accuracy: 0, // You might need to include accuracy if available
+            country: "Unknown", // You can modify this depending on the data structure
+        };
+        yield insertPlayerIfNotExists(osuPlayer);
     }
-    // Now print the players after all inserts are complete
+    // Print all players after inserting
     db.all("SELECT ID, osu_id, username, rank, pp, accuracy, country FROM osu_players", (err, rows) => {
         if (err) {
             console.error("Error querying the database:", err);
@@ -127,5 +112,5 @@ const insertPlayersAndPrint = () => __awaiter(void 0, void 0, void 0, function* 
         });
     });
 });
-// Run the function to insert players and print them
-insertPlayersAndPrint();
+// Run the function to fetch and insert players
+fetchAndInsertPlayers();

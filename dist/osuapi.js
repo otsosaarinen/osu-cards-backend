@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.player_list = void 0;
+exports.apiCall = apiCall;
 require("dotenv").config();
 const API_KEY = process.env.OSU_API_KEY;
 let player_list = [
@@ -22,9 +25,10 @@ let player_list = [
     "Nev-",
     "Zralf",
 ];
-let fetched = [];
+exports.player_list = player_list;
 function apiCall(players) {
     return __awaiter(this, void 0, void 0, function* () {
+        let fetched = [];
         const fetchPromises = players.map((player) => __awaiter(this, void 0, void 0, function* () {
             const url = new URL("https://osu.ppy.sh/api/get_user");
             const params = { k: API_KEY, u: player, type: "string" };
@@ -39,7 +43,10 @@ function apiCall(players) {
                 }
                 const data = yield response.json();
                 if (data.length > 0) {
-                    fetched.push(data[0].username, data[0].pp_rank); // osu! API returns an array
+                    fetched.push({
+                        username: data[0].username,
+                        pp_rank: data[0].pp_rank,
+                    }); // Push the relevant data for each player
                 }
             }
             catch (error) {
@@ -47,12 +54,6 @@ function apiCall(players) {
             }
         }));
         yield Promise.all(fetchPromises); // Wait for all requests to complete
+        return fetched; // Return the fetched player data as an array
     });
 }
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield apiCall(player_list);
-        console.log(fetched); // Ensures it prints after API calls are done
-    });
-}
-main();

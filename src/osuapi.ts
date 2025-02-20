@@ -16,7 +16,14 @@ let player_list = [
 ];
 
 async function apiCall(players: string[]) {
-    let fetched: { username: string; pp_rank: number }[] = [];
+    let fetched: {
+        user_id: string;
+        username: string;
+        pp_rank: string;
+        pp_raw: string;
+        accuracy: string;
+        country: string;
+    }[] = [];
 
     const fetchPromises = players.map(async (player) => {
         const url = new URL("https://osu.ppy.sh/api/get_user");
@@ -40,8 +47,12 @@ async function apiCall(players: string[]) {
 
             if (data.length > 0) {
                 fetched.push({
+                    user_id: data[0].user_id,
                     username: data[0].username,
                     pp_rank: data[0].pp_rank,
+                    pp_raw: data[0].pp_raw,
+                    accuracy: data[0].accuracy,
+                    country: data[0].country,
                 }); // Push the relevant data for each player
             }
         } catch (error) {

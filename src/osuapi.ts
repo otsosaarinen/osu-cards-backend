@@ -2,7 +2,18 @@ require("dotenv").config();
 
 const API_KEY = process.env.OSU_API_KEY;
 
-let player_list = ["Aetherian", "chu", "Tikkanen", "Haadez", "boleks"];
+let player_list = [
+    "chu",
+    "AllyrD",
+    "Dezku",
+    "BeerLovingGnome",
+    "Haadez",
+    "Chakrami",
+    "Isak-",
+    "Tikkanen",
+    "Nev-",
+    "Zralf",
+];
 
 let fetched: string[] = [];
 

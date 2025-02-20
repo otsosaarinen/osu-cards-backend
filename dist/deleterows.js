@@ -1,0 +1,32 @@
+const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
+
+// Database path (same as in your main script)
+const dbPath = path.resolve(__dirname, "../db/player_database.db");
+
+// Connect to the database
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error("Failed to connect to the database:", err.message);
+    } else {
+        console.log(`Connected to the database at ${dbPath}`);
+    }
+});
+
+// Correct DELETE statement
+db.run("DELETE FROM osu_players WHERE rank = 0", function (err) {
+    if (err) {
+        console.error("Error deleting from the database:", err);
+    } else {
+        console.log(`Deleted ${this.changes} rows from the database.`);
+    }
+
+    // Close the database after query
+    db.close((closeErr) => {
+        if (closeErr) {
+            console.error("Error closing the database:", closeErr.message);
+        } else {
+            console.log("Database connection closed.");
+        }
+    });
+});

@@ -5,8 +5,9 @@ import sqlite3 from "sqlite3";
 import path from "path";
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT; // Get the port from environment variables
 
+// Define the structure of an OsuPlayer object
 interface OsuPlayer {
     user_id: string;
     username: string;
@@ -16,32 +17,34 @@ interface OsuPlayer {
     country: string;
 }
 
+// Define the expected response structure
 interface PlayerData {
-    players?: OsuPlayer[]; // Optional players array
+    players?: OsuPlayer[]; // Optional array of players
     message?: string; // Optional message in case no players are found
 }
 
-// use CORS middleware
+// Enable CORS to allow cross-origin requests
 app.use(cors());
 
+// Define the API endpoint to fetch player data
 app.get("/api/card_request", (req: Request, res: Response) => {
-    let player_data: { players?: OsuPlayer[]; message?: string } = {};
+    let player_data: PlayerData = {};
 
-    // Database path (same as in your main script)
+    // Define the path to the SQLite database file
     const dbPath: string = path.resolve(__dirname, "../db/player_database.db");
 
     // Create a new SQLite database connection
     const db = new sqlite3.Database(dbPath, (err: Error | null) => {
         if (err) {
             console.error("Failed to connect to the database:", err.message);
-            res.status(500).json({ message: "Database connection failed" }); // Return error in JSON
+            res.status(500).json({ message: "Database connection failed" }); // Return an error response
             return;
         } else {
             console.log(`Connected to the database at ${dbPath}`);
         }
     });
 
-    // Query the database
+    // Query the database to get player data
     db.all(
         "SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players LIMIT 3",
         (err, rows: OsuPlayer[]) => {
@@ -49,20 +52,21 @@ app.get("/api/card_request", (req: Request, res: Response) => {
                 console.error("Error querying the database:", err);
                 res.status(500).json({
                     message: "Error querying the database",
-                }); // Return error in JSON
+                }); // Return an error response
                 return;
             }
 
+            // Check if any data was retrieved
             if (rows.length > 0) {
-                player_data.players = rows;
+                player_data.players = rows; // Store retrieved players
             } else {
-                player_data.message = "No players found.";
+                player_data.message = "No players found."; // No data found message
             }
 
             // Send the response in JSON format
             res.json(player_data);
 
-            // Close the database connection
+            // Close the database connection after the response is sent
             db.close((closeErr) => {
                 if (closeErr) {
                     console.error(
@@ -77,6 +81,7 @@ app.get("/api/card_request", (req: Request, res: Response) => {
     );
 });
 
+// Start the Express server and listen on the specified port
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });

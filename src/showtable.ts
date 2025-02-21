@@ -25,7 +25,7 @@ const db = new sqlite3.Database(dbPath, (err: Error | null) => {
 });
 
 // Select all rows from osu_players table
-db.all<OsuPlayer[]>("SELECT * FROM osu_players", (err, rows) => {
+db.all<OsuPlayer[]>("SELECT * FROM osu_players ORDER BY rank", (err, rows) => {
     if (err) {
         console.error("Error querying the database:", err);
     } else {

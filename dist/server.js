@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const sqlite3_1 = __importDefault(require("sqlite3"));
 const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 const port = process.env.PORT;
+app.use((0, cors_1.default)());
 app.get("/api/card_request", (req, res) => {
     let player_data = {};
     const dbPath = path_1.default.resolve(__dirname, "../db/player_database.db");

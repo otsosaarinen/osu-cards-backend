@@ -43,7 +43,7 @@ app.get("/api/card_request", (req: Request, res: Response) => {
 
     // Query the database
     db.all(
-        "SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players",
+        "SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players LIMIT 3",
         (err, rows: OsuPlayer[]) => {
             if (err) {
                 console.error("Error querying the database:", err);

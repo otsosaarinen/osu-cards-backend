@@ -15,7 +15,7 @@ app.get("/api/card_request", (req, res) => {
     const db = new sqlite3_1.default.Database(dbPath, (err) => {
         if (err) {
             console.error("Failed to connect to the database:", err.message);
-            res.status(500).send("Failed to connect to the database.");
+            res.status(500).json({ message: "Database connection failed" });
             return;
         }
         else {
@@ -25,7 +25,9 @@ app.get("/api/card_request", (req, res) => {
     db.all("SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players", (err, rows) => {
         if (err) {
             console.error("Error querying the database:", err);
-            res.status(500).send("Error querying the database.");
+            res.status(500).json({
+                message: "Error querying the database",
+            });
             return;
         }
         if (rows.length > 0) {
@@ -34,6 +36,7 @@ app.get("/api/card_request", (req, res) => {
         else {
             player_data.message = "No players found.";
         }
+        res.json(player_data);
         db.close((closeErr) => {
             if (closeErr) {
                 console.error("Error closing the database:", closeErr.message);
@@ -41,10 +44,9 @@ app.get("/api/card_request", (req, res) => {
             else {
                 console.log("Database connection closed.");
             }
-            res.json(player_data);
         });
     });
 });
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Listening on port ${port}`);
 });

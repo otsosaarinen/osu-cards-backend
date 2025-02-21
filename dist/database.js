@@ -28,12 +28,12 @@ const db = new sqlite3_1.default.Database(dbPath, (err) => {
 db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS osu_players (
-            ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT NOT NULL UNIQUE,
-            username TEXT NOT NULL,
-            rank TEXT,
-            pp TEXT,
-            accuracy TEXT,
+            ID INTEGER PRIMARY KEY AUTOINCREMENT, 
+            user_id TEXT NOT NULL UNIQUE, 
+            username TEXT NOT NULL, 
+            rank TEXT, 
+            pp TEXT, 
+            accuracy TEXT, 
             country TEXT
         )
     `);

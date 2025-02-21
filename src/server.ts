@@ -21,7 +21,6 @@ interface PlayerData {
 }
 
 app.get("/api/card_request", (req: Request, res: Response) => {
-    console.log("request arrived");
     let player_data: { players?: OsuPlayer[]; message?: string } = {};
 
     // Database path (same as in your main script)

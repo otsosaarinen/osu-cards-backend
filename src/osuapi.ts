@@ -4,22 +4,22 @@ require("dotenv").config(); // Load environment variables from .env file
 const API_KEY = process.env.OSU_API_KEY;
 
 // List of osu! player usernames to fetch data for
-let player_list: string[] = [
-    "aimbotcone",
-    "pipipupu997",
-    "def",
-    "hydrocodone",
-    "chicony",
-    "ttv_ufo",
-    "enri",
-    "sytho",
-    "toromivana019",
-    "suurii",
-    "hotdog4000",
-    "worst hr player",
-    "flaro",
-    "-cloppit",
-    "raikouhou",
+let player_list = [
+    "yamss",
+    "shimon",
+    "lexu2s",
+    "femboygaming",
+    "milkteaism",
+    "maliszewski",
+    "shyot73",
+    "whitecat",
+    "jayar",
+    "chocopafe",
+    "salikuu",
+    "kamensh1k",
+    "yary",
+    "ur cute",
+    "awesome sauce",
 ];
 
 // Function to fetch osu! player data from the osu! API
@@ -68,8 +68,8 @@ async function apiCall(players: string[]) {
                     user_id: data[0].user_id, // Unique player ID
                     username: data[0].username, // Player's username
                     pp_rank: parseInt(data[0].pp_rank), // Player's global rank
-                    pp_raw: parseFloat(data[0].pp_raw), // Player's performance points (pp) as a number
-                    accuracy: parseFloat(data[0].accuracy), // Player's accuracy percentage as a number
+                    pp_raw: parseFloat(data[0].pp_raw.toFixed(0)), // Round pp_raw to 0 decimals
+                    accuracy: parseFloat(data[0].accuracy.toFixed(2)), // Round accuracy to 2 decimals
                     country: data[0].country, // Player's country code
                 });
             }

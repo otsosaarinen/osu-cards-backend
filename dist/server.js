@@ -24,7 +24,7 @@ app.get("/api/card_request", (req, res) => {
             console.log(`Connected to the database at ${dbPath}`);
         }
     });
-    db.all("SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players LIMIT 3", (err, rows) => {
+    db.all("SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players", (err, rows) => {
         if (err) {
             console.error("Error querying the database:", err);
             res.status(500).json({
@@ -33,7 +33,8 @@ app.get("/api/card_request", (req, res) => {
             return;
         }
         if (rows.length > 0) {
-            player_data.players = rows;
+            const shuffledPlayers = rows.sort(() => 0.5 - Math.random());
+            player_data.players = shuffledPlayers.slice(0, 3);
         }
         else {
             player_data.message = "No players found.";

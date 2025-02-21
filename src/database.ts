@@ -101,7 +101,7 @@ const fetchAndInsertPlayers = async () => {
 
     // Iterate through the players and insert them into the database
     for (const player of players) {
-        const osuPlayer = {
+        const osuPlayer: OsuPlayer = {
             user_id: player.user_id,
             username: player.username,
             rank: player.pp_rank,

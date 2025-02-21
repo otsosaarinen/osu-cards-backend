@@ -64,12 +64,17 @@ async function apiCall(players: string[]) {
 
             // If player data is found, store the relevant information
             if (data.length > 0) {
+                const pp_raw = parseFloat(data[0].pp_raw);
+                const accuracy = parseFloat(data[0].accuracy);
+
                 fetched.push({
                     user_id: data[0].user_id, // Unique player ID
                     username: data[0].username, // Player's username
                     pp_rank: parseInt(data[0].pp_rank), // Player's global rank
-                    pp_raw: parseFloat(data[0].pp_raw.toFixed(0)), // Round pp_raw to 0 decimals
-                    accuracy: parseFloat(data[0].accuracy.toFixed(2)), // Round accuracy to 2 decimals
+                    pp_raw: !isNaN(pp_raw) ? parseFloat(pp_raw.toFixed(0)) : 0, // Round pp_raw to 0 decimals, default to 0 if invalid
+                    accuracy: !isNaN(accuracy)
+                        ? parseFloat(accuracy.toFixed(2))
+                        : 0, // Round accuracy to 2 decimals, default to 0 if invalid
                     country: data[0].country, // Player's country code
                 });
             }

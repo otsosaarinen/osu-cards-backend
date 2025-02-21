@@ -24,7 +24,7 @@ app.get("/api/card_request", (req, res) => {
             console.log(`Connected to the database at ${dbPath}`);
         }
     });
-    db.all("SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players", (err, rows) => {
+    db.all("SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players LIMIT 3", (err, rows) => {
         if (err) {
             console.error("Error querying the database:", err);
             res.status(500).json({

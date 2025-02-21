@@ -1,5 +1,6 @@
 require("dotenv").config();
 import express, { Request, Response } from "express";
+import cors from "cors";
 import sqlite3 from "sqlite3";
 import path from "path";
 
@@ -19,6 +20,9 @@ interface PlayerData {
     players?: OsuPlayer[]; // Optional players array
     message?: string; // Optional message in case no players are found
 }
+
+// use CORS middleware
+app.use(cors());
 
 app.get("/api/card_request", (req: Request, res: Response) => {
     let player_data: { players?: OsuPlayer[]; message?: string } = {};

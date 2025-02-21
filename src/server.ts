@@ -46,7 +46,7 @@ app.get("/api/card_request", (req: Request, res: Response) => {
 
     // Query the database to get player data
     db.all(
-        "SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players LIMIT 3",
+        "SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players",
         (err, rows: OsuPlayer[]) => {
             if (err) {
                 console.error("Error querying the database:", err);
@@ -58,7 +58,11 @@ app.get("/api/card_request", (req: Request, res: Response) => {
 
             // Check if any data was retrieved
             if (rows.length > 0) {
-                player_data.players = rows; // Store retrieved players
+                // Shuffle the players array randomly
+                const shuffledPlayers = rows.sort(() => 0.5 - Math.random());
+
+                // Take the first 3 players from the shuffled array
+                player_data.players = shuffledPlayers.slice(0, 3);
             } else {
                 player_data.message = "No players found."; // No data found message
             }

@@ -96,7 +96,7 @@ const fetchAndInsertPlayers = async () => {
 
     const players = await apiCall(player_list); // Fetch players from API
 
-    console.log("Fetched data:", players);
+    //console.log("Fetched data:", players);
 
     for (const player of players) {
         const osuPlayer = {

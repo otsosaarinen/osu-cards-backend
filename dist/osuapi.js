@@ -54,10 +54,8 @@ function apiCall(players) {
                         user_id: data[0].user_id,
                         username: data[0].username,
                         pp_rank: parseInt(data[0].pp_rank),
-                        pp_raw: !isNaN(pp_raw) ? parseFloat(pp_raw.toFixed(0)) : 0,
-                        accuracy: !isNaN(accuracy)
-                            ? parseFloat(accuracy.toFixed(2))
-                            : 0,
+                        pp_raw: parseFloat(pp_raw.toFixed(0)),
+                        accuracy: parseFloat(accuracy.toFixed(2)),
                         country: data[0].country,
                     });
                 }

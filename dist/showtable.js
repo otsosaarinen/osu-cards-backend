@@ -14,7 +14,7 @@ const db = new sqlite3_1.default.Database(dbPath, (err) => {
         console.log(`Connected to the database at ${dbPath}`);
     }
 });
-db.all("SELECT * FROM osu_players", (err, rows) => {
+db.all("SELECT * FROM osu_players ORDER BY rank", (err, rows) => {
     if (err) {
         console.error("Error querying the database:", err);
     }

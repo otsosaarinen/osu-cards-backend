@@ -48,12 +48,16 @@ function apiCall(players) {
                 }
                 const data = yield response.json();
                 if (data.length > 0) {
+                    const pp_raw = parseFloat(data[0].pp_raw);
+                    const accuracy = parseFloat(data[0].accuracy);
                     fetched.push({
                         user_id: data[0].user_id,
                         username: data[0].username,
                         pp_rank: parseInt(data[0].pp_rank),
-                        pp_raw: parseFloat(data[0].pp_raw.toFixed(0)),
-                        accuracy: parseFloat(data[0].accuracy.toFixed(2)),
+                        pp_raw: !isNaN(pp_raw) ? parseFloat(pp_raw.toFixed(0)) : 0,
+                        accuracy: !isNaN(accuracy)
+                            ? parseFloat(accuracy.toFixed(2))
+                            : 0,
                         country: data[0].country,
                     });
                 }

@@ -10,7 +10,6 @@ const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.get("/api/card_request", (req, res) => {
-    console.log("request arrived");
     let player_data = {};
     const dbPath = path_1.default.resolve(__dirname, "../db/player_database.db");
     const db = new sqlite3_1.default.Database(dbPath, (err) => {

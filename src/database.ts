@@ -8,9 +8,9 @@ import { apiCall, player_list } from "./osuapi"; // Import API functions from os
 interface OsuPlayer {
     user_id: string; // Unique ID of the player
     username: string; // Player's in-game name
-    rank: string; // Player's global rank
-    pp: string; // Player's performance points
-    accuracy: string; // Player's accuracy percentage
+    rank: number; // Player's global rank
+    pp: number; // Player's performance points
+    accuracy: number; // Player's accuracy percentage
     country: string; // Player's country code
 }
 
@@ -33,9 +33,9 @@ db.serialize(() => {
             ID INTEGER PRIMARY KEY AUTOINCREMENT, 
             user_id TEXT NOT NULL UNIQUE, 
             username TEXT NOT NULL, 
-            rank TEXT, 
-            pp TEXT, 
-            accuracy TEXT, 
+            rank INTEGER, 
+            pp REAL, 
+            accuracy REAL, 
             country TEXT
         )
     `);

@@ -31,9 +31,9 @@ db.serialize(() => {
             ID INTEGER PRIMARY KEY AUTOINCREMENT, 
             user_id TEXT NOT NULL UNIQUE, 
             username TEXT NOT NULL, 
-            rank TEXT, 
-            pp TEXT, 
-            accuracy TEXT, 
+            rank INTEGER, 
+            pp REAL, 
+            accuracy REAL, 
             country TEXT
         )
     `);

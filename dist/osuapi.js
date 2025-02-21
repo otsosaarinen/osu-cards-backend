@@ -14,21 +14,21 @@ exports.apiCall = apiCall;
 require("dotenv").config();
 const API_KEY = process.env.OSU_API_KEY;
 let player_list = [
-    "aimbotcone",
-    "pipipupu997",
-    "def",
-    "hydrocodone",
-    "chicony",
-    "ttv_ufo",
-    "enri",
-    "sytho",
-    "toromivana019",
-    "suurii",
-    "hotdog4000",
-    "worst hr player",
-    "flaro",
-    "-cloppit",
-    "raikouhou",
+    "yamss",
+    "shimon",
+    "lexu2s",
+    "femboygaming",
+    "milkteaism",
+    "maliszewski",
+    "shyot73",
+    "whitecat",
+    "jayar",
+    "chocopafe",
+    "salikuu",
+    "kamensh1k",
+    "yary",
+    "ur cute",
+    "awesome sauce",
 ];
 exports.player_list = player_list;
 function apiCall(players) {
@@ -52,8 +52,8 @@ function apiCall(players) {
                         user_id: data[0].user_id,
                         username: data[0].username,
                         pp_rank: parseInt(data[0].pp_rank),
-                        pp_raw: parseFloat(data[0].pp_raw),
-                        accuracy: parseFloat(data[0].accuracy),
+                        pp_raw: parseFloat(data[0].pp_raw.toFixed(0)),
+                        accuracy: parseFloat(data[0].accuracy.toFixed(2)),
                         country: data[0].country,
                     });
                 }

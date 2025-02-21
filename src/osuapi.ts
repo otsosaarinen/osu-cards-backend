@@ -5,16 +5,16 @@ const API_KEY = process.env.OSU_API_KEY;
 
 // List of osu! player usernames to fetch data for
 let player_list = [
-    "mrekk",
-    "ivaxa",
-    "accolibed",
-    "gnahus",
-    "ninerik",
-    "bored yes",
-    "jappadekappa",
-    "nyanpotato",
-    "detective",
-    "creator",
+    "milosz",
+    "jahkon",
+    "cloutiful",
+    "plasma",
+    "asecretbox",
+    "minhoca loka",
+    "flyingtuna",
+    "yellow sucks",
+    "aknzx",
+    "freezes",
 ];
 
 // Function to fetch osu! player data from the osu! API

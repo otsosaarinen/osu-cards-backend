@@ -14,16 +14,16 @@ exports.apiCall = apiCall;
 require("dotenv").config();
 const API_KEY = process.env.OSU_API_KEY;
 let player_list = [
-    "chu",
-    "AllyrD",
-    "Dezku",
-    "BeerLovingGnome",
-    "Haadez",
-    "Chakrami",
-    "Isak-",
-    "Tikkanen",
-    "Nev-",
-    "Zralf",
+    "mrekk",
+    "ivaxa",
+    "accolibed",
+    "gnahus",
+    "ninerik",
+    "bored yes",
+    "jappadekappa",
+    "nyanpotato",
+    "detective",
+    "creator",
 ];
 exports.player_list = player_list;
 function apiCall(players) {

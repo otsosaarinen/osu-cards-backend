@@ -29,21 +29,6 @@ let player_list = [
     "flaro",
     "-cloppit",
     "raikouhou",
-    "yamss",
-    "shimon",
-    "lexu2s",
-    "femboygaming",
-    "milkteaism",
-    "maliszewski",
-    "shyot73",
-    "whitecat",
-    "jayar",
-    "chocopafe",
-    "salikuu",
-    "kamensh1k",
-    "yary",
-    "ur cute",
-    "awesome sauce",
 ];
 exports.player_list = player_list;
 function apiCall(players) {
@@ -66,9 +51,9 @@ function apiCall(players) {
                     fetched.push({
                         user_id: data[0].user_id,
                         username: data[0].username,
-                        pp_rank: data[0].pp_rank,
-                        pp_raw: data[0].pp_raw,
-                        accuracy: data[0].accuracy,
+                        pp_rank: parseInt(data[0].pp_rank),
+                        pp_raw: parseFloat(data[0].pp_raw),
+                        accuracy: parseFloat(data[0].accuracy),
                         country: data[0].country,
                     });
                 }

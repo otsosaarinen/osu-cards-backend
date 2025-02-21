@@ -2,22 +2,22 @@ require("dotenv").config();
 
 import sqlite3 from "sqlite3";
 import path from "path";
-import { apiCall, player_list } from "./osuapi"; // Import apiCall from osuapi.ts
+import { apiCall, player_list } from "./osuapi"; // Import API functions from osuapi.ts
 
 // Define the structure of a row in the osu_players table
 interface OsuPlayer {
-    user_id: string;
-    username: string;
-    rank: string;
-    pp: string;
-    accuracy: string;
-    country: string;
+    user_id: string; // Unique ID of the player
+    username: string; // Player's in-game name
+    rank: string; // Player's global rank
+    pp: string; // Player's performance points
+    accuracy: string; // Player's accuracy percentage
+    country: string; // Player's country code
 }
 
-// Database path
+// Define the path to the SQLite database file
 const dbPath = path.resolve(__dirname, "../db", "player_database.db");
 
-// Create or open the database
+// Create or open the SQLite database
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error("Failed to connect to the database:", err.message);
@@ -26,24 +26,25 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Ensure the table exists
+// Ensure the osu_players table exists, create it if not
 db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS osu_players (
-            ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT NOT NULL UNIQUE,
-            username TEXT NOT NULL,
-            rank TEXT,
-            pp TEXT,
-            accuracy TEXT,
+            ID INTEGER PRIMARY KEY AUTOINCREMENT, 
+            user_id TEXT NOT NULL UNIQUE, 
+            username TEXT NOT NULL, 
+            rank TEXT, 
+            pp TEXT, 
+            accuracy TEXT, 
             country TEXT
         )
     `);
 });
 
-// Function to insert a player only if they don't exist
+// Function to insert a player into the database **only if they do not exist**
 const insertPlayerIfNotExists = (player: OsuPlayer): Promise<void> => {
     return new Promise((resolve) => {
+        // Check if the player already exists in the database
         db.get(
             "SELECT user_id FROM osu_players WHERE user_id = ?",
             [player.user_id],
@@ -60,6 +61,7 @@ const insertPlayerIfNotExists = (player: OsuPlayer): Promise<void> => {
                     );
                     resolve();
                 } else {
+                    // Insert new player into the database
                     db.run(
                         "INSERT INTO osu_players (user_id, username, rank, pp, accuracy, country) VALUES (?, ?, ?, ?, ?, ?)",
                         [
@@ -90,14 +92,14 @@ const insertPlayerIfNotExists = (player: OsuPlayer): Promise<void> => {
     });
 };
 
-// Fetch player data from the API and insert into the database
+// Function to fetch player data from the osu! API and insert into the database
 const fetchAndInsertPlayers = async () => {
     console.log("Fetching player data from osu! API...");
 
-    const players = await apiCall(player_list); // Fetch players from API
+    // Fetch players from the osu! API
+    const players = await apiCall(player_list);
 
-    //console.log("Fetched data:", players);
-
+    // Iterate through the players and insert them into the database
     for (const player of players) {
         const osuPlayer = {
             user_id: player.user_id,
@@ -110,7 +112,7 @@ const fetchAndInsertPlayers = async () => {
         await insertPlayerIfNotExists(osuPlayer);
     }
 
-    // Print all players after inserting
+    // Print all players from the database after inserting new ones
     db.all(
         "SELECT ID, user_id, username, rank, pp, accuracy, country FROM osu_players",
         (err, rows: OsuPlayer[]) => {
@@ -124,7 +126,7 @@ const fetchAndInsertPlayers = async () => {
                 });
             }
 
-            // Close the database after everything is done
+            // Close the database connection after everything is done
             db.close((closeErr) => {
                 if (closeErr) {
                     console.error(

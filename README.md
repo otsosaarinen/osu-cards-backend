@@ -7,3 +7,7 @@
 Works together with the [osu-cards-frontend](https://github.com/otsosaarinen/osu-cards-frontend).
 
 This backend handles database management and retrieves player data from an SQLite3 database when a request is made by the frontend. The database currently contains the data for the top 50 osu!standard players as of February 22, 2025.
+
+# How to run
+1. Add your osu! api key and port to ```.env```. Frontend uses port 3000 for communicating with backend so using that is recommended
+2. Run ```server.js``` to start the express.js server

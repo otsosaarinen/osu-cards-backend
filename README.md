@@ -10,4 +10,4 @@ This backend handles database management and retrieves player data from an SQLit
 
 # How to run
 1. Create ```.env``` file to root directory and add your osu! api key and port to ```.env```. Frontend uses port 3000 for communicating with backend so using that is recommended unless you also change frontend port value
-2. Run ```server.js``` to start the express.js server
+2. Run ```dist/server.js``` to start the express.js server
